@@ -1,0 +1,51 @@
+version: '3'
+services:
+  varnish:
+    image: fballiano/varnish
+    ports:
+      - "80:80"
+      - "6082:6082"
+    depends_on:
+      - apache
+    links:
+      - apache
+    volumes:
+      - ./varnish.vcl:/etc/varnish/default.vcl
+      - ./varnish.secret:/etc/varnish/secret
+    environment:
+      - CACHE_SIZE=256M
+      
+  apache:
+    image: fballiano/magento2-apache-php
+    depends_on:
+      - db
+      - cache
+      - clusterdata
+    links:
+      - db
+      - cache
+      - clusterdata
+    volumes:
+      - ./magento2:/var/www/html
+      - ~/.composer/auth.json:/root/.composer/auth.json
+
+  db:
+    image: mysql:5.7
+    ports:
+      - "3307:3307"
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=magento2
+      - MYSQL_DATABASE=magento2
+      - MYSQL_USER=magento2
+      - MYSQL_PASSWORD=magento2
+
+  cache:
+    image: fballiano/redis-volatile
+
+  clusterdata:
+    image: fballiano/redis-volatile
+
+volumes:
+  dbdata:
