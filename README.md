@@ -21,7 +21,7 @@ composer update brenohalabi/magento2-add-banner
 Type localhost/setup for configure and install database
 
 # Database default data
-User: magento2
-Password: magento2
-Database name: magento2
-Host: db
+* User: magento2
+* Password: magento2
+* Database name: magento2
+* Host: db
